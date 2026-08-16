@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrandHum - Интернет-магазин одежды</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        /* Шапка сайта */
+        header {
+            border-bottom: 2px solid #000000;
+            position: sticky;
+            top: 0;
+            background-color: #ffffff;
+            z-index: 1000;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #000000;
+            background-color: transparent;
+        }
+
+        .brand-name {
+            font-size: 24px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .nav-link {
+            color: #000000;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .nav-link:hover {
+            opacity: 0.7;
+        }
+
+        .btn-black {
+            background-color: #000000;
+            color: #ffffff;
+            border: 2px solid #000000;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-black:hover {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        /* Главный контент */
+        main {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            font-size: 28px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            border-left: 5px solid #000000;
+            padding-left: 15px;
+        }
+
+        /* Сетка карточек товаров в стиле Wildberries */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 25px;
+        }
+
+        .product-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .product-img-placeholder {
+            width: 100%;
+            height: 280px;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #666666;
+            font-weight: 500;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .product-info {
+            padding: 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-brand {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #666666;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .product-name {
+            font-size: 15px;
+            color: #000000;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .card-actions {
+            margin-top: auto;
+        }
+
+        .btn-add-cart {
+            width: 100%;
+            background-color: #000000;
+            color: #ffffff;
+            border: 1px solid #000000;
+            padding: 10px;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-add-cart:hover {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        /* Модальные окна (Карточка товара / Корзина / Вход) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+            border: 2px solid #000000;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .close-modal:hover {
+            color: #666666;
+        }
+
+        /* Стили модалки товара */
+        .product-detail {
+            display: flex;
+            gap: 25px;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .product-detail {
+                flex-direction: column;
+            }
+        }
+
+        .detail-img {
+            width: 200px;
+            height: 260px;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666666;
+            border-radius: 4px;
+        }
+
+        .detail-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .detail-title {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .detail-desc {
+            font-size: 14px;
+            color: #333333;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .reviews-link {
+            display: inline-block;
+            color: #000000;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-decoration: underline;
+        }
+
+        /* Стили модалки корзины */
+        .cart-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #000000;
+            padding-bottom: 10px;
+        }
+
+        .cart-items-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .remove-item {
+            background: none;
+            border: none;
+            color: #ff0000;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+
+        .btn-buy {
+            width: 100%;
+            background-color: #000000;
+            color: #ffffff;
+            border: 2px solid #000000;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.2s;
+        }
+
+        .btn-buy:hover {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        .buy-instruction {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px dashed #000000;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .buy-instruction a {
+            color: #000000;
+            text-decoration: underline;
+            font-weight: 700;
+        }
+
+        /* Стили модалки входа через Google */
+        .login-box {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .btn-google {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background-color: #ffffff;
+            color: #000000;
+            border: 2px solid #000000;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .btn-google:hover {
+            background-color: #000000;
+            color: #ffffff;
+        }
+
+        .google-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Иконка корзины с бейджем количества */
+        .cart-nav-link {
+            position: relative;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -12px;
+            background-color: #000000;
+            color: #ffffff;
+            font-size: 11px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border: 1px solid #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Шапка сайта -->
+    <header>
+        <div class="header-container">
+            <div class="logo-container">
+                <!-- Встроенный SVG логотип на основе отправленного файла image_nhgZ2M.png. Мишка в очках и худи с компасом -->
+                <svg class="logo-img" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="48" fill="none" stroke="black" stroke-width="2"/>
+                    <circle cx="50" cy="50" r="44" fill="none" stroke="black" stroke-width="1"/>
+                    <!-- Уши -->
+                    <circle cx="30" cy="35" r="12" fill="#d2b48c" stroke="black" stroke-width="2"/>
+                    <circle cx="70" cy="35" r="12" fill="#d2b48c" stroke="black" stroke-width="2"/>
+                    <!-- Голова -->
+                    <circle cx="50" cy="52" r="25" fill="#cd853f" stroke="black" stroke-width="2"/>
+                    <!-- Мордочка -->
+                    <ellipse cx="50" cy="58" rx="10" ry="7" fill="#f5f5dc" stroke="black" stroke-width="1.5"/>
+                    <polygon points="47,55 53,55 50,58" fill="black"/>
+                    <!-- Очки -->
+                    <path d="M 28 45 Q 38 43 50 47 Q 62 43 72 45 Q 75 55 63 56 Q 50 50 37 56 Q 25 55 28 45 Z" fill="black"/>
+                    <!-- Капюшон худи -->
+                    <path d="M 25 75 Q 50 65 75 75 Q 70 95 30 95 Z" fill="#228b22" stroke="black" stroke-width="2"/>
+                    <!-- Патч бренда Stone Island на плече -->
+                    <rect x="28" y="76" width="10" height="10" rx="1" fill="black"/>
+                    <circle cx="33" cy="81" r="3" fill="none" stroke="#gold" stroke-width="0.5"/>
+                </svg>
+                <span class="brand-name">BrandHum</span>
+            </div>
+
+            <nav class="nav-links">
+                <a href="https://www.avito.ru/brands/9a75029e7f437ef35306318417eacd49" target="_blank" class="nav-link">
+                    Мы есть на Avito
+                </a>
+                <a href="#" class="nav-link cart-nav-link" onclick="openCartModal(event)">
+                    Корзина <span class="cart-count" id="cartCount">0</span>
+                </a>
+                <button class="btn-black" onclick="openLoginModal()">Войти</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Основной контент страницы -->
+    <main>
+        <h2 class="section-title">Каталог товаров</h2>
+        
+        <!-- Сетка товаров в стиле расположения карточек Wildberries -->
+        <div class="products-grid">
+            
+            <!-- Карточка 1 -->
+            <div class="product-card" onclick="openProductModal('Футболка мужская поло Polo Ralph Lauren', 'Premium качество. Отличный хлопковый материал, идеальная посадка. Черный классический цвет, фирменный вышитый логотип.')">
+                <div class="product-img-placeholder">Поло Ralph Lauren</div>
+                <div class="product-info">
+                    <div>
+                        <div class="product-brand">Polo Ralph Lauren</div>
+                        <div class="product-name">Футболка мужская поло чёрная</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-add-cart" onclick="addToCart('Футболка поло Ralph Lauren', event)">В корзину</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Карточка 2 -->
+            <div class="product-card" onclick="openProductModal('Полузамок Polo Ralph Lauren', 'Стильный трикотажный полузамок. Мягкая и приятная к телу ткань, идеальный вариант на прохладную погоду.')">
+                <div class="product-img-placeholder">Полузамок Ralph Lauren</div>
+                <div class="product-info">
+                    <div>
+                        <div class="product-brand">Polo Ralph Lauren</div>
+                        <div class="product-name">Полузамок хлопковый демисезонный</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-add-cart" onclick="addToCart('Полузамок Ralph Lauren', event)">В корзину</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Карточка 3 -->
+            <div class="product-card" onclick="openProductModal('Жилетка Lacoste', 'Утепленная стеганая жилетка с влагозащитным покрытием. Классический логотип-крокодил на груди.')">
+                <div class="product-img-placeholder">Жилетка Lacoste</div>
+                <div class="product-info">
+                    <div>
+                        <div class="product-brand">Lacoste</div>
+                        <div class="product-name">Жилетка утепленная чёрная</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-add-cart" onclick="addToCart('Жилетка Lacoste', event)">В корзину</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Карточка 4 -->
+            <div class="product-card" onclick="openProductModal('Зипка project army', 'Плотное худи на молнии (зипка) в стиле милитари-casual. Свободный крой, глубокий капюшон.')">
+                <div class="product-img-placeholder">Зипка project army</div>
+                <div class="product-info">
+                    <div>
+                        <div class="product-brand">Project Army</div>
+                        <div class="product-name">Толстовка на молнии (зипка)</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-add-cart" onclick="addToCart('Зипка project army', event)">В корзину</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Модальное окно: Детали товара -->
+    <div id="productModal" class="modal" onclick="closeAllModals(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close-modal" onclick="closeModal('productModal')">&times;</span>
+            <div class="product-detail">
+                <div class="detail-img" id="modalProductImg">Фото товара</div>
+                <div class="detail-info">
+                    <div>
+                        <h3 class="detail-title" id="modalProductTitle">Название товара</h3>
+                        <p class="detail-desc" id="modalProductDesc">Описание товара</p>
+                    </div>
+                    <div>
+                        <a href="https://t.me/BrandHum2" target="_blank" class="reviews-link">Читать отзывы в Telegram</a>
+                        <button class="btn-buy" id="modalAddToCartBtn">Добавить в корзину</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно: Корзина -->
+    <div id="cartModal" class="modal" onclick="closeAllModals(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close-modal" onclick="closeModal('cartModal')">&times;</span>
+            <h3 class="cart-title">Ваша корзина</h3>
+            <div class="cart-items-list" id="cartItemsList">
+                <!-- Сюда динамически добавляются товары -->
+            </div>
+            <button class="btn-buy" onclick="checkoutCart()">Купить</button>
+            <div class="buy-instruction" id="buyInstruction">
+                Для покупки товара напишите сюда: <a href="https://t.me/BrandHum" target="_blank">t.me/BrandHum</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно: Вход через Google -->
+    <div id="loginModal" class="modal" onclick="closeAllModals(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close-modal" onclick="closeModal('loginModal')">&times;</span>
+            <h3 class="cart-title" style="text-align: center;">Вход в аккаунт</h3>
+            <div class="login-box">
+                <button class="btn-google" onclick="mockGoogleLogin()">
+                    <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
+                    </svg>
+                    Войти через Google
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Состояние корзины
+        let cart = [];
+
+        // Функции корзины
+        function updateCartUI() {
+            const cartCountEl = document.getElementById('cartCount');
+            cartCountEl.innerText = cart.length;
+
+            const cartItemsList = document.getElementById('cartItemsList');
+            cartItemsList.innerHTML = '';
+
+            if (cart.length === 0) {
+                cartItemsList.innerHTML = '<p style="text-align: center; color: #666;">Корзина пуста</p>';
+                return;
+            }
+
+            cart.forEach((item, index) => {
+                const itemEl = document.createElement('div');
+                itemEl.className = 'cart-item';
+                itemEl.innerHTML = `
+                    <span>${item}</span>
+                    <button class="remove-item" onclick="removeFromCart(${index})">Удалить</button>
+                `;
+                cartItemsList.appendChild(itemEl);
+            });
+        }
+
+        function addToCart(itemName, event) {
+            if (event) event.stopPropagation(); // Чтобы не открывалась модалка товара при клике на кнопку
+            cart.push(itemName);
+            updateCartUI();
+            alert(`Товар "${itemName}" добавлен в корзину!`);
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+            document.getElementById('buyInstruction').style.display = 'none';
+        }
+
+        function checkoutCart() {
+            if (cart.length === 0) {
+                alert('Добавьте товары в корзину перед покупкой!');
+                return;
+            }
+            document.getElementById('buyInstruction').style.display = 'block';
+        }
+
+        // Открытие / Закрытие окон
+        function openProductModal(title, desc) {
+            document.getElementById('modalProductTitle').innerText = title;
+            document.getElementById('modalProductDesc').innerText = desc;
+            document.getElementById('modalProductImg').innerText = title;
+            
+            // Настройка кнопки добавления в корзину внутри модалки
+            const addToCartBtn = document.getElementById('modalAddToCartBtn');
+            addToCartBtn.onclick = function() {
+                addToCart(title);
+            };
+
+            document.getElementById('productModal').style.display = 'flex';
+        }
+
+        function openCartModal(event) {
+            if (event) event.preventDefault();
+            updateCartUI();
+            document.getElementById('cartModal').style.display = 'flex';
+        }
+
+        function openLoginModal() {
+            document.getElementById('loginModal').style.display = 'flex';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+            if (id === 'cartModal') {
+                document.getElementById('buyInstruction').style.display = 'none';
+            }
+        }
+
+        function closeAllModals(event) {
+            document.getElementById('productModal').style.display = 'none';
+            document.getElementById('cartModal').style.display = 'none';
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('buyInstruction').style.display = 'none';
+        }
+
+        function mockGoogleLogin() {
+            alert('Имитация: Вы успешно авторизовались через аккаунт Google!');
+            closeModal('loginModal');
+        }
+    </script>
+</body>
+</html>
